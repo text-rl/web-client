@@ -1,0 +1,42 @@
+<mat-card class="p-4">
+  <div class="row justify-content-center">
+    <h1>Connexion</h1>
+  </div>
+  <form (ngSubmit)="logUser()" [formGroup]="userLoginForm" class="my-2">
+    <div class=" d-flex  flex-column" id="user-data">
+      <mat-form-field appearance="outline" class="w-100 mx-auto">
+        <mat-label>Email</mat-label>
+        <input [formControl]="emailCtrl" id="email" matInput type="text">
+        <mat-error *ngIf="emailCtrl.hasError('email') && !emailCtrl.hasError('required')">
+          Rentrer un email valide
+        </mat-error>
+        <mat-error *ngIf="emailCtrl.hasError('required')">
+          L'email est <strong>nécessaire</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100 mx-auto">
+        <mat-label>Mot de passe</mat-label>
+        <input [formControl]="userPwdCtrl" autocomplete="current-password" id="password" matInput type="password">
+        <mat-hint><a class="mat-accent" routerLink="/recovery">Mot de passe oublié ?</a></mat-hint>
+        <mat-error *ngIf="userPwdCtrl.hasError('required')">
+          Le mot de passe est <strong>nécessaire</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-checkbox class="my-1"
+                    formControlName="rememberMe"
+                    labelPosition="after">
+        Se souvenir de moi
+      </mat-checkbox>
+      <button [disabled]="!isFormValid()" class="ml-2" id="sign-in-button" mat-stroked-button type="submit">Connexion
+      </button>
+    </div>
+  </form>
+  <div class="d-flex  justify-content-center mt-3">
+    <button [routerLink]="['/register']" color="accent" mat-button>Créer un compte</button>
+  </div>
+</mat-card>
+
+
+
+
+
