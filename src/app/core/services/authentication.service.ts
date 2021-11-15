@@ -4,7 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {RegisterUserCommand} from "../../shared/models/users/requests";
 import {Observable, switchMap} from "rxjs";
 import {LoginUser} from "../../shared/models/users/login-user";
-import {IPublicUser, Token} from "../../shared/models/users/responses";
+import {PublicUser, Token} from "../../shared/models/users/responses";
 
 @Injectable({
   providedIn: 'root'
@@ -42,11 +42,11 @@ export class AuthenticationService {
     return this.http.post(`${this.apiUrl}/registration`, user);
   }
 
-  getMe(): Observable<IPublicUser> {
-    return this.http.get<IPublicUser>(`${this.apiUrl}/me`);
+  getMe(): Observable<PublicUser> {
+    return this.http.get<PublicUser>(`${this.apiUrl}/me`);
   }
 
-  login(user: LoginUser): Observable<IPublicUser> {
+  login(user: LoginUser): Observable<PublicUser> {
     return this.http.post<Token>(`${this.apiUrl}/authentication`, user).pipe(
       switchMap(token => {
         this.setToken(token.token);

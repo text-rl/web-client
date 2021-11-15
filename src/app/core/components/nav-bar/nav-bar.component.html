@@ -1,0 +1,25 @@
+<nav backgroundColor="primary" mat-tab-nav-bar>
+  <div class="w-75">
+    <ng-container *ngIf=" user$ | async as user">
+      <a [routerLink]="['/editor']" class="nav-link" data-toggle="tab" id="homeLink" mat-tab-link
+         routerLinkActive="active">Editeur</a>
+    </ng-container>
+    <a *ngIf="!(user$ | async) as user" [routerLink]="['/login']" class="nav-link" data-toggle="tab" id="loginLink"
+       mat-tab-link routerLinkActive="active">Connexion</a>
+  </div>
+  <div class="d-flex w-25 justify-content-end align-items-center">
+    <ng-container *ngIf="user$ | async as user">
+      <button [matMenuTriggerFor]="userMenu" aria-label="Profile" mat-button>
+        {{user.username}}
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button (click)="onLogout()" mat-menu-item>
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Déconnexion</span>
+        </button>
+      </mat-menu>
+    </ng-container>
+  </div>
+</nav>
+

@@ -1,1 +1,14 @@
-<p>editor works!</p>
+<div class="row">
+  <button mat-button (click)="sendTreatmentReq()" [disabled]="!canSendReq">Traiter</button>
+  <div class="col-6">
+    <mat-form-field class="example-full-width" appearance="fill">
+      <mat-label>Renseigner le texte</mat-label>
+      <textarea matInput placeholder="Texte à traiter..." [formControl]="editorCtrl"></textarea>
+    </mat-form-field>
+  </div>
+  <div class="col-6">
+    <div *ngIf="treatmentResult$|async">
+      {{treatmentResult}}
+    </div>
+  </div>
+</div>

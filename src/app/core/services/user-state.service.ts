@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, catchError, map, Observable, of} from "rxjs";
-import {IPublicUser} from "../../shared/models/users/responses";
+import {PublicUser} from "../../shared/models/users/responses";
 import {AuthenticationService} from "./authentication.service";
 import * as _ from "lodash";
 
@@ -9,18 +9,18 @@ import * as _ from "lodash";
 })
 export class UserStateService {
 
-  userSubject$ = new BehaviorSubject<IPublicUser | null>(null);
+  userSubject$ = new BehaviorSubject<PublicUser | null>(null);
 
   constructor(private authService: AuthenticationService) {
   }
 
-  private _user: IPublicUser | null = null;
+  private _user: PublicUser | null = null;
 
-  get user(): IPublicUser | null {
+  get user(): PublicUser | null {
     return _.cloneDeep(this._user);
   }
 
-  loadUser$(): Observable<IPublicUser | null> {
+  loadUser$(): Observable<PublicUser | null> {
     if (!this._user && this.authService.getRememberMe()) {
       return this.reloadUser$();
     }
@@ -40,7 +40,7 @@ export class UserStateService {
     this.reloadUser$().subscribe();
   }
 
-  reloadUser$(): Observable<IPublicUser> {
+  reloadUser$(): Observable<PublicUser> {
     return this.authService.getMe().pipe(map(user => {
       this._user = user;
       this.userSubject$.next(this.user);
@@ -51,7 +51,8 @@ export class UserStateService {
       return of(null);
     })));
   }
-  updateUser(user: IPublicUser): void {
+
+  updateUser(user: PublicUser | null): void {
     this._user = user;
     this.userSubject$.next(this.user);
   }

@@ -4,23 +4,29 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {TokenInterceptor} from "./interceptors/token-interceptor";
 import {RouterModule} from "@angular/router";
 import {SharedModule} from "../shared/shared.module";
+import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 
 
 @NgModule({
-  declarations: [],
-  imports: [
-    HttpClientModule,
-    CommonModule,
-    RouterModule,
-    SharedModule,
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptor,
-      multi: true,
-    }
-  ]
+    declarations: [
+        NavBarComponent
+    ],
+    imports: [
+        HttpClientModule,
+        CommonModule,
+        RouterModule,
+        SharedModule,
+    ],
+    exports: [
+        NavBarComponent
+    ],
+    providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
+            multi: true,
+        }
+    ]
 
 })
 export class CoreModule {

@@ -9,6 +9,7 @@ import {LoginComponent} from './login/login.component';
 import {RegisterComponent} from './register/register.component';
 import {EditorComponent} from './editor/editor.component';
 import {SharedModule} from "./shared/shared.module";
+import {CommonModule} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -18,11 +19,12 @@ import {SharedModule} from "./shared/shared.module";
     EditorComponent
   ],
   imports: [
+    CommonModule,
     BrowserModule,
+    BrowserAnimationsModule,
     CoreModule,
-    SharedModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    SharedModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -7,9 +7,9 @@ import {RegisterComponent} from "./register/register.component";
 
 const routes: Routes = [
   {path: '', redirectTo: '/editor', pathMatch: 'full'},
-  {path: '**', component: EditorComponent, canActivate: [AuthGuardService]},
   {path: 'login', component: LoginComponent},
-  {path: 'register', component: RegisterComponent}
+  {path: 'register', component: RegisterComponent},
+  {path: '**', component: EditorComponent, canActivate: [AuthGuardService]},
 ];
 
 @NgModule({
