@@ -46,7 +46,7 @@
  * Zone JS is required by default for Angular itself.
  */
 import 'zone.js';  // Included with Angular CLI.
-
+import 'event-source-polyfill/src/eventsource.min.js';
 
 /***************************************************************************************************
  * APPLICATION IMPORTS

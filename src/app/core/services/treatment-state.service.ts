@@ -1,21 +1,29 @@
 import {Injectable, NgZone} from '@angular/core';
-import {from, Observable, of, Subject} from 'rxjs';
+import {from, map, Observable, of, Subject} from 'rxjs';
 import {HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
 import {environment} from "../../../environments/environment";
 import {AuthenticationService} from "./authentication.service";
 import {UserStateService} from "./user-state.service";
 import {TreatmentDoneEvent} from "../../shared/models/treatments/events";
+import {NativeEventSource, EventSourcePolyfill} from "event-source-polyfill";
+
+interface Event<TData> {
+  type?: string;
+  data: TData;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class TreatmentStateService {
 
+
   public treatmentDone$ = new Subject<TreatmentDoneEvent>();
   private hubConnection!: HubConnection | null;
-  private hubUrl = `${environment.apiUrl}/texttreatmenthub`;
+  private url = `${environment.apiUrl}/sse-texttreatment`;
   private readonly connectionTimeout = environment.realTimeConnectionTimeout;
-  private readonly onTextTreatmentDone = 'OnTextTreatmentDone';
+  private eventSource!: EventSource | null;
+  private allEvents$!: Subject<Event<any>>;
 
   constructor(private readonly _authService: AuthenticationService,
               private readonly _userStateService: UserStateService,
@@ -23,46 +31,58 @@ export class TreatmentStateService {
     this.listenUserChange();
   }
 
+  private connect() {
+    this.eventSource = new EventSourcePolyfill(this.url, {
+      headers: {
+        'Accept': 'text/event-stream',
+        'Authorization': 'Bearer ' + this._authService.getToken()
+      }
+    });
+  }
+
+
+
+  private listenAllEvents() {
+    this.allEvents$ = new Subject<Event<any>>();
+    if (this.eventSource == null) return;
+    this.eventSource.onmessage = event => {
+      this._zone.run(() => {
+        this.allEvents$.next((JSON).parse(event.data))
+      })
+    };
+    this.eventSource.onerror = error => {
+      this._zone.run(() => {
+        this.allEvents$.error(error)
+      })
+    };
+  }
+
   public get isConnected(): boolean {
     return this.hubConnection?.state === HubConnectionState.Connected;
   }
 
-  public startConnection(): Observable<any> {
-    if (this.hubConnection) {
-      return of(null);
+  public startConnection() {
+    if (this.eventSource) {
+      return;
     }
-
-    this.hubConnection = new HubConnectionBuilder()
-      .withUrl(this.hubUrl, {accessTokenFactory: () => this._authService.getToken() ?? ''})
-      .build();
-    this.hubConnection.serverTimeoutInMilliseconds = this.connectionTimeout;
-    this._userStateService.userSubject$.subscribe(user => {
-      if (user == null) {
-        this.stopConnection().subscribe();
-      }
-    });
-    return from(this.hubConnection.start());
+    this.connect();
+    this.listenAllEvents();
   }
 
-
-  public stopConnection(): Observable<any> {
-    const stopConnection$ = from(this.hubConnection ? this.hubConnection.stop() : of(null));
-    this.hubConnection = null;
-    return stopConnection$;
+  public stopConnection() {
+    this.eventSource?.close()
+    this.eventSource = null;
   }
 
   public listenTreatmentDone(): void {
-    this.hubConnection?.on(this.onTextTreatmentDone, (event: TreatmentDoneEvent) => {
-      console.log("EVENT", event);
-      this._zone.run(() => this.treatmentDone$.next(event));
-    });
+    this.allEvents$.subscribe(res =>
+      this.treatmentDone$.next(res.data))
   }
 
   private listenUserChange(): void {
     this._userStateService.userSubject$.subscribe(user => {
-      this.startConnection().subscribe(_ => {
-        this.listenTreatmentDone();
-      });
+      this.stopConnection();
+      this.startConnection();
     });
   }
 }
