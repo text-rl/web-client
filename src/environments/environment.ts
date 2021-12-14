@@ -1,16 +1,15 @@
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-import 'zone.js/dist/zone-error';
-import {BaseEnvironment} from './base-environment'; // Included with Angular CLI.
+export interface IEnvironment {
+  production: boolean,
+  apiUrl: string,
+  webStorageTokenKey: string,
+  rememberMeKey: string,
+  realTimeConnectionTimeout: number
+}
 
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
-
-export const environment = new BaseEnvironment();
-
+export const environment: IEnvironment = {
+  production: false,
+  apiUrl: "http://localhost:5000",
+  webStorageTokenKey: "token",
+  rememberMeKey: "rememberMe",
+  realTimeConnectionTimeout: 3600000,
+}

@@ -15,6 +15,7 @@ export class NavBarComponent implements OnInit {
 
   user$!: BehaviorSubject<PublicUser | null>;
 
+
   constructor(private userStateService: UserStateService,
               private authService: AuthenticationService,
               private _router: Router,
