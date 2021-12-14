@@ -5,16 +5,18 @@ import {RegisterUserCommand} from "../../shared/models/users/requests";
 import {Observable, switchMap} from "rxjs";
 import {LoginUser} from "../../shared/models/users/login-user";
 import {PublicUser, Token} from "../../shared/models/users/responses";
+import {ApiUrlService} from "./api-url.service";
+import {ApiBaseService} from "./api-base.service";
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthenticationService {
+export class AuthenticationService extends ApiBaseService {
 
-  constructor(private http: HttpClient) {
+  constructor(http: HttpClient, apiUrlService: ApiUrlService) {
+    super(http, apiUrlService,"users");
   }
 
-  private apiUrl = `${environment.apiUrl}/users`;
   private tokenKey = environment.webStorageTokenKey;
   private rememberMeKey = environment.rememberMeKey;
 
@@ -39,15 +41,15 @@ export class AuthenticationService {
   }
 
   register(user: RegisterUserCommand): Observable<any> {
-    return this.http.post(`${this.apiUrl}/registration`, user);
+    return this.http.post(`${this.url}/registration`, user);
   }
 
   getMe(): Observable<PublicUser> {
-    return this.http.get<PublicUser>(`${this.apiUrl}/me`);
+    return this.http.get<PublicUser>(`${this.url}/me`);
   }
 
   login(user: LoginUser): Observable<PublicUser> {
-    return this.http.post<Token>(`${this.apiUrl}/authentication`, user).pipe(
+    return this.http.post<Token>(`${this.url}/authentication`, user).pipe(
       switchMap(token => {
         this.setToken(token.token);
         this.setRememberMe(user.rememberMe);
@@ -55,5 +57,6 @@ export class AuthenticationService {
       })
     );
   }
+
 
 }
