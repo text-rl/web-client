@@ -13,7 +13,7 @@ const envConfigFile = `export interface IEnvironment {
 }
 
 export const environment: IEnvironment = {
-  webStorageApiUrlKey: ${WEB_STORAGE_API_URL_KEY},
+  webStorageApiUrlKey: "${WEB_STORAGE_API_URL_KEY}",
   production: ${PRODUCTION},
   apiUrl: "${API_URL}",
   webStorageTokenKey: "${WEB_STORAGE_TOKEN_KEY}",
